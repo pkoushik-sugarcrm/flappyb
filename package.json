@@ -1,0 +1,17 @@
+{
+  "name": "phaser3-webpack-es6-dev-starter",
+  "version": "1.0.0",
+  "description": "learning phaser3",
+  "main": "index.js",
+  "repository": "https://github.com/pkoushik-sugarcrm/phaser3-webpack-es6-dev-starter",
+  "author": "Prashanth Koushik",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "babel-loader": "^7.0.0",
+    "webpack": "^3.0.0"
+  },
+  "dependencies": {
+    "phaser": "^3.0.0"
+  }
+}
