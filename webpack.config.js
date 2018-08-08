@@ -27,8 +27,10 @@ module.exports = {
     ]
   },
 
-  devServer: {
-    contentBase: path.resolve(__dirname, 'build'),
+  devServer : {
+    headers: {"Access-Control-Allow-Origin": "*"},
+    port:3000,
+    publicPath: 'http://localhost:3000/',
   },
 
    plugins: [

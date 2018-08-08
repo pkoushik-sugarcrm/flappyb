@@ -12,9 +12,12 @@
     "babel-preset-env": "^1.7.0",
     "copy-webpack-plugin": "^4.5.2",
     "webpack": "^3.0.0",
-    "webpack-dev-server": "^2.0.0"
+    "webpack-dev-server": "^2.0.0",
+    "expose-loader": "^0.7.3"
   },
   "dependencies": {
-    "phaser": "^3.0.0"
+    "p2": "^0.7.1",
+    "phaser-ce": "^2.10.0",
+    "pixi": "^0.3.1"
   }
 }
