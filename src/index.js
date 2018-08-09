@@ -24,7 +24,7 @@ var normalState = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.bird = game.add.sprite(100, (Math.floor(Math.random() * 400)), 'bird');
-        this.bird.scale.setTo(0.25,0.25);
+        this.bird.scale.setTo(0.5,0.5);
 
         game.physics.arcade.enable(this.bird);
 
@@ -64,7 +64,7 @@ var normalState = {
     },
 
     update: function() {
-        if (this.bird.y < -50 || this.bird.y > 600) {
+        if (this.bird.y < -100 || this.bird.y > 600) {
             this.restartGame();
         }
         game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
@@ -88,7 +88,7 @@ var normalState = {
     addFullPipe: function() {
         hole = Math.floor(Math.random() * 5);
         for (var i = 0; i < 6; i++) {
-            if (i != hole) {
+            if (i != hole && i+1 != hole) {
                 this.addPipeImage(500, (i * 100 + 10));
             }
         }
