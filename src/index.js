@@ -89,7 +89,7 @@ var normalState = {
         hole = Math.floor(Math.random() * 5);
         for (var i = 0; i < 6; i++) {
             if (i != hole && i+1 != hole) {
-                this.addPipeImage(500, (i * 100 + 10));
+                this.addPipeImage(700, (i * 100 + 10));
             }
         }
         this.score += 100;
