@@ -11,7 +11,7 @@ if (highScore  === null) {
 
 var normalState = {
     preload: function() {
-        this.game.load.image('bird', './assets/logo.svg');
+        this.game.load.image('cube', './assets/logo.svg');
 
         this.game.load.image('pipe', './assets/pipe.png');
 
@@ -31,13 +31,13 @@ var normalState = {
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        this.bird = game.add.sprite(100, (Math.floor(Math.random() * 400)), 'bird');
+        this.cube = game.add.sprite(100, (Math.floor(Math.random() * 400)), 'cube');
         
-        this.bird.scale.setTo(0.5,0.5);
+        this.cube.scale.setTo(0.5,0.5);
 
-        game.physics.arcade.enable(this.bird);
+        game.physics.arcade.enable(this.cube);
 
-        this.bird.body.gravity.y = 1000;
+        this.cube.body.gravity.y = 1000;
 
         this.controlkey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
@@ -73,20 +73,20 @@ var normalState = {
     },
 
     update: function() {
-        if (this.bird.y < -100 || this.bird.y > 600) {
+        if (this.cube.y < -100 || this.cube.y > 600) {
             // this.crashSound.play()
             this.restartGame();
         }
-        game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+        game.physics.arcade.overlap(this.cube, this.pipes, this.restartGame, null, this);
     },
 
     jump: function() {
         this.jumpSound.play();
-        this.bird.body.velocity.y = -350;
+        this.cube.body.velocity.y = -350;
     },
 
     stop: function() {
-        this.bird.body.gravity.y = 100000;
+        this.cube.body.gravity.y = 100000;
     },
 
     addPipeImage: function(x, y) {
