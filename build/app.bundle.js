@@ -1,4 +1,14 @@
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["appbundle"] = factory();
+	else
+		root["appbundle"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -57,7 +67,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "http://localhost:3000/";
 /******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 1);
@@ -97,6 +107,13 @@ module.exports = g;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.init = init;
+exports.render = render;
+exports.dispose = dispose;
+
 var _pixi = __webpack_require__(2);
 
 var _pixi2 = _interopRequireDefault(_pixi);
@@ -111,114 +128,160 @@ var _phaserSplit2 = _interopRequireDefault(_phaserSplit);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var hole;
+function init(sdk, context) {
+    console.log('init called');
+}
 
-var normalState = {
-  preload: function preload() {
-    this.game.load.image('bird', './assets/logo.svg');
+function render(el) {
+    var hole;
 
-    this.game.load.image('pipe', './assets/pipe.png');
+    var hostPath = 'http://localhost:3000/';
 
-    this.game.load.image('restartButton', './assets/button.png', 193, 71);
-  },
-
-  create: function create() {
-    game.stage.backgroundColor = '#8999b2';
-
-    game.physics.startSystem(_phaserSplit2.default.Physics.ARCADE);
-
-    this.bird = game.add.sprite(100, Math.floor(Math.random() * 400), 'bird');
-    this.bird.scale.setTo(0.25, 0.25);
-
-    game.physics.arcade.enable(this.bird);
-
-    this.bird.body.gravity.y = 1000;
-
-    this.controlkey = game.input.keyboard.addKey(_phaserSplit2.default.Keyboard.SPACEBAR);
-    this.controlkey.onDown.add(this.jump, this);
-
-    this.pipes = game.add.group();
-
-    this.timer = game.time.events.loop(3000, this.addFullPipe, this);
-
-    this.score = -100;
-
-    this.scoreLabel = game.add.text(20, 20, "0", { font: "30px Arial" });
-
-    this.gameOverScore = game.add.text(250, 250, "", { font: "32px Arial" });
-
-    this.gameOverScore.visible = false;
-
-    this.gameOverLabel = game.add.text(250, 300, "Game Over", { font: "32px Arial" });
-
-    this.gameOverLabel.visible = false;
-
-    this.restartButton = game.add.button(310, 350, 'restartButton', this.actionOnClick, this, null, null, null, this.actionOnClick);
-
-    this.restartButton.scale.setTo(0.1, 0.1);
-
-    this.restartButton.visible = false;
-  },
-
-  update: function update() {
-    if (this.bird.y < -50 || this.bird.y > 600) {
-      this.restartGame();
+    var highScore = localStorage.getItem('highscore');
+    if (highScore === null) {
+        localStorage.setItem('highscore', 0);
+        highScore = 0;
     }
-    game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
-  },
 
-  jump: function jump() {
-    this.bird.body.velocity.y = -350;
-  },
+    var normalState = {
+        preload: function preload() {
+            this.game.load.crossOrigin = "Anonymous";
 
-  stop: function stop() {
-    this.bird.body.gravity.y = 100000;
-  },
+            this.game.load.image('bird', hostPath + '/assets/logo.svg');
 
-  addPipeImage: function addPipeImage(x, y) {
-    var p = game.add.sprite(x, y, 'pipe');
-    this.pipes.add(p);
-    game.physics.arcade.enable(p);
-    p.body.velocity.x = -200;
-  },
+            this.game.load.image('pipe', hostPath + '/assets/pipe.png');
 
-  addFullPipe: function addFullPipe() {
-    hole = Math.floor(Math.random() * 5);
-    for (var i = 0; i < 6; i++) {
-      if (i != hole) {
-        this.addPipeImage(500, i * 100 + 10);
-      }
-    }
-    this.score += 100;
-    this.scoreLabel.text = this.score;
-  },
+            this.game.load.image('restartButton', hostPath + '/assets/button.png', 193, 71);
 
-  restartGame: function restartGame() {
-    this.gameOverLabel.visible = true;
-    this.restartButton.visible = true;
-    if (this.score === -100) {
-      this.score = 0;
-    }
-    this.gameOverScore.text = "Score: " + this.score;
-    this.gameOverScore.visible = true;
-    game.time.events.remove(this.timer);
-    this.controlkey.onDown.add(this.stop, this);
-  },
+            this.game.load.audio('crashsound', hostPath + '/assets/crash.mp3', 193, 71);
+        },
 
-  actionOnClick: function actionOnClick() {
+        create: function create() {
+            game.stage.backgroundColor = '#8999b2';
+
+            game.physics.startSystem(_phaserSplit2.default.Physics.ARCADE);
+
+            this.bird = game.add.sprite(100, Math.floor(Math.random() * 400), 'bird');
+
+            this.bird.scale.setTo(0.5, 0.5);
+
+            game.physics.arcade.enable(this.bird);
+
+            this.bird.body.gravity.y = 1000;
+
+            this.controlkey = game.input.keyboard.addKey(_phaserSplit2.default.Keyboard.SPACEBAR);
+
+            this.controlkey.onDown.add(this.jump, this);
+
+            // this.crashSound = game.add.audio('crashsound');  
+
+            // game.sound.setDecodedCallback([ this.crashSound ], null, this);
+
+            this.pipes = game.add.group();
+
+            this.timer = game.time.events.loop(3000, this.addFullPipe, this);
+
+            this.score = -100;
+
+            this.scoreLabel = game.add.text(20, 20, '0', { font: '30px Arial' });
+
+            this.gameOverScore = game.add.text(250, 200, '0', { font: '32px Arial' });
+
+            this.gameOverScore.visible = false;
+
+            this.gameOverHighScore = game.add.text(250, 250, '0', { font: '32px Arial' });
+
+            this.gameOverHighScore.visible = false;
+
+            this.gameOverLabel = game.add.text(250, 300, 'Game Over', { font: '32px Arial' });
+
+            this.gameOverLabel.visible = false;
+
+            this.restartButton = game.add.button(310, 350, 'restartButton', this.actionOnClick, this, null, null, null, this.actionOnClick);
+
+            this.restartButton.scale.setTo(0.1, 0.1);
+
+            this.restartButton.visible = false;
+        },
+
+        update: function update() {
+            if (this.bird.y < -100 || this.bird.y > 600) {
+                this.restartGame();
+            }
+            game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
+        },
+
+        jump: function jump() {
+            this.bird.body.velocity.y = -350;
+        },
+
+        stop: function stop() {
+            this.bird.body.gravity.y = 100000;
+        },
+
+        addPipeImage: function addPipeImage(x, y) {
+            var p = game.add.sprite(x, y, 'pipe');
+            this.pipes.add(p);
+            game.physics.arcade.enable(p);
+            p.body.velocity.x = -200;
+        },
+
+        addFullPipe: function addFullPipe() {
+            hole = Math.floor(Math.random() * 5);
+            for (var i = 0; i < 6; i++) {
+                if (i != hole && i + 1 != hole) {
+                    this.addPipeImage(700, i * 100 + 10);
+                }
+            }
+            this.score += 100;
+            this.scoreLabel.text = this.score;
+        },
+
+        restartGame: function restartGame() {
+            // this.crashSound.play();
+            if (this.score >= highScore) {
+                localStorage.setItem('highscore', this.score);
+                highScore = this.score;
+            }
+            this.gameOverLabel.visible = true;
+            this.restartButton.visible = true;
+            if (this.score === -100) {
+                this.score = 0;
+            }
+            this.gameOverScore.text = 'Score: ' + this.score;
+            this.gameOverScore.visible = true;
+            this.gameOverHighScore.text = 'High Score: ' + highScore;
+            this.gameOverHighScore.visible = true;
+            game.time.events.remove(this.timer);
+            this.controlkey.onDown.add(this.stop, this);
+        },
+
+        actionOnClick: function actionOnClick() {
+            game.state.start('index');
+        }
+    };
+
+    el.id = revisedRandId();
+
+    var gameConfig = {
+        width: 700,
+        height: 600,
+        parent: el.id
+    };
+
+    var game = new _phaserSplit2.default.Game(gameConfig);
+    game.state.add('index', normalState);
     game.state.start('index');
-  }
-};
+    console.log(el.id);
+}
 
-var gameConfig = {
-  width: 700,
-  height: 600
-};
+function dispose() {
+    console.log('dispose called');
+}
 
-var game = new _phaserSplit2.default.Game(gameConfig);
-
-game.state.add('index', normalState);
-game.state.start('index');
+function revisedRandId() {
+    return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
+}
 
 /***/ }),
 /* 2 */
@@ -113441,3 +113504,4 @@ process.umask = function() { return 0; };
 
 /***/ })
 /******/ ]);
+});
