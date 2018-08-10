@@ -17,11 +17,17 @@ var normalState = {
 
         this.game.load.image('restartButton', './assets/button.png', 193, 71);
 
-        this.game.load.audio('crashsound', './assets/crash.mp3', 193, 71);
+        this.game.load.audio('jumpsound', './assets/jump.mp3');
+
+        this.game.load.audio('crashsound', './assets/crash.mp3');
     },
 
     create: function() {
-        game.stage.backgroundColor = '#8999b2';
+        game.stage.backgroundColor = getRandomColor();
+
+        this.jumpSound = game.add.audio('jumpsound');
+
+        this.crashSound = game.add.audio('crashsound');
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -36,10 +42,6 @@ var normalState = {
         this.controlkey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
         this.controlkey.onDown.add(this.jump, this);
-
-        // this.crashSound = game.add.audio('crashsound');
-
-        // game.sound.setDecodedCallback([ this.crashSound ], null, this);
 
         this.pipes = game.add.group();
 
@@ -72,12 +74,14 @@ var normalState = {
 
     update: function() {
         if (this.bird.y < -100 || this.bird.y > 600) {
+            // this.crashSound.play()
             this.restartGame();
         }
         game.physics.arcade.overlap(this.bird, this.pipes, this.restartGame, null, this);
     },
 
     jump: function() {
+        this.jumpSound.play();
         this.bird.body.velocity.y = -350;
     },
 
@@ -101,10 +105,10 @@ var normalState = {
         }
         this.score += 100;
         this.scoreLabel.text = this.score;
+        game.stage.backgroundColor = getRandomColor();
     },
 
     restartGame: function() {
-        // this.crashSound.play();
         if (this.score >= highScore) {
             localStorage.setItem('highscore', this.score);
             highScore = this.score;
@@ -114,6 +118,7 @@ var normalState = {
         if (this.score === -100) {
             this.score = 0;
         }
+        game.stage.backgroundColor = '#8999b2';
         this.gameOverScore.text = 'Score: ' + this.score;
         this.gameOverScore.visible = true;
         this.gameOverHighScore.text = 'High Score: ' + highScore;
@@ -135,4 +140,13 @@ const gameConfig = {
 var game = new Phaser.Game(gameConfig);
 game.state.add('index', normalState);
 game.state.start('index');
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
 
