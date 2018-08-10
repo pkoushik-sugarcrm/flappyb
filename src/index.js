@@ -16,6 +16,8 @@ var normalState = {
         this.game.load.image('pipe', './assets/pipe.png');
 
         this.game.load.image('restartButton', './assets/button.png', 193, 71);
+
+        this.game.load.audio('crashsound', './assets/crash.mp3', 193, 71);
     },
 
     create: function() {
@@ -24,6 +26,7 @@ var normalState = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.bird = game.add.sprite(100, (Math.floor(Math.random() * 400)), 'bird');
+        
         this.bird.scale.setTo(0.5,0.5);
 
         game.physics.arcade.enable(this.bird);
@@ -33,6 +36,10 @@ var normalState = {
         this.controlkey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
         this.controlkey.onDown.add(this.jump, this);
+
+        // this.crashSound = game.add.audio('crashsound');
+
+        // game.sound.setDecodedCallback([ this.crashSound ], null, this);
 
         this.pipes = game.add.group();
 
@@ -97,6 +104,7 @@ var normalState = {
     },
 
     restartGame: function() {
+        // this.crashSound.play();
         if (this.score >= highScore) {
             localStorage.setItem('highscore', this.score);
             highScore = this.score;
