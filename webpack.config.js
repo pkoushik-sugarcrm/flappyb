@@ -8,10 +8,12 @@ module.exports = {
   },
 
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'app.bundle.js'
+    publicPath: 'http://localhost:3000/', 
+    path: path.resolve(__dirname, './build'),
+    filename: 'app.bundle.js',
+    library: 'appbundle',
+    libraryTarget: 'umd'
   },
-
   module: {
     rules: [
       {

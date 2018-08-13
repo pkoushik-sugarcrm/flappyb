@@ -1,7 +1,15 @@
 <html>
-  <head>
-  </head>
-  <body>
-    <script src="app.bundle.js"></script>
-  </body>
+<head>
+   <!-- UMD Modules can be included like a normal JS file OR loaded via a JS Loader
+   They are not ES6 module compatible however. -->
+   <script type="text/javascript" src="app.bundle.js"></script>
+</head>
+<body>
+   <div id="root">
+   </div>
+   <script type="text/javascript">
+       hello.init();
+       hello.render(document.getElementById('root'));
+   </script>
+</body>
 </html>
