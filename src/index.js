@@ -11,6 +11,8 @@ if (highScore  === null) {
 
 var normalState = {
     preload: function() {
+        this.game.load.image('bg', './assets/background.png');
+
         this.game.load.image('cube', './assets/logo.svg');
 
         this.game.load.image('pipe', './assets/pipe.png');
@@ -23,7 +25,9 @@ var normalState = {
     },
 
     create: function() {
-        game.stage.backgroundColor = getRandomColor();
+        game.stage.backgroundColor = getRandomColor;
+
+        this.bg = game.add.image(game.world.centerX, game.world.centerY, 'bg').anchor.set(0.5);
 
         this.jumpSound = game.add.audio('jumpsound');
 
@@ -49,19 +53,25 @@ var normalState = {
 
         this.score = -100;
 
-        this.scoreLabel = game.add.text(20, 20,'0', {font: '30px Arial'});
+        var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
 
-        this.gameOverScore = game.add.text(250, 200, '0', {font: '32px Arial'});
+        this.textInfo = game.add.group();
 
-        this.gameOverScore.visible = false;
+        this.scoreLabel = game.add.text(20, 20,'0', style);
 
-        this.gameOverHighScore = game.add.text(250, 250, '0', {font: '32px Arial'});
+        this.scoreLabel.fill = '#000000';  
 
-        this.gameOverHighScore.visible = false;
+        this.gameOverScore = game.add.text(250, 200, '0', style);
 
-        this.gameOverLabel = game.add.text(250, 300, 'Game Over', {font: '32px Arial'});
+        this.textInfo.add(this.gameOverScore);
 
-        this.gameOverLabel.visible = false;
+        this.gameOverHighScore = game.add.text(250, 250, '0', style);
+
+        this.textInfo.add(this.gameOverHighScore);
+
+        this.gameOverLabel = game.add.text(250, 300, 'Game Over', style);
+
+        this.textInfo.add(this.gameOverLabel);
 
         this.restartButton = game.add.button(
             310, 350, 'restartButton', this.actionOnClick, this, null, null, null, this.actionOnClick
@@ -69,12 +79,13 @@ var normalState = {
 
         this.restartButton.scale.setTo(0.1, 0.1);
 
-        this.restartButton.visible = false;
+        this.textInfo.add(this.restartButton);
+
+        this.textInfo.visible = false;
     },
 
     update: function() {
         if (this.cube.y < -100 || this.cube.y > 600) {
-            // this.crashSound.play()
             this.restartGame();
         }
         game.physics.arcade.overlap(this.cube, this.pipes, this.restartGame, null, this);
@@ -108,7 +119,16 @@ var normalState = {
         game.stage.backgroundColor = getRandomColor();
     },
 
-    restartGame: function() {
+    restartGame: function() { 
+        var bmd = game.add.bitmapData(1, 1);
+        bmd.fill(0, 0, 0);
+        var semiTransparentOverlay = game.add.sprite(0, 0, bmd);
+        semiTransparentOverlay.scale.setTo(game.width, game.height);
+        semiTransparentOverlay.alpha = 0;
+        game.add.tween(semiTransparentOverlay).to({alpha:0.3}, 500, Phaser.Easing.Quadratic.In, true);
+        semiTransparentOverlay.moveDown();
+        this.textInfo.visible = true;
+        game.world.bringToTop(this.textInfo);
         if (this.score >= highScore) {
             localStorage.setItem('highscore', this.score);
             highScore = this.score;
