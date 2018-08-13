@@ -2,9 +2,9 @@ import PIXI from 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js';
 import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js';
 import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
 
+var game;
 
 export function init(sdk, context) {
-  console.log('init called');
 }
 
 export function render(el) {
@@ -31,35 +31,26 @@ export function render(el) {
             this.game.load.image('restartButton', `${hostPath}/assets/button.png`, 193, 71);
 
             this.game.load.audio('jumpsound', `${hostPath}/assets/jump.mp3`);
-
-            this.game.load.audio('crashsound', `${hostPath}/assets/crash.mp3`);
         },
 
         create: function() {
-            game.stage.backgroundColor = getRandomColor;
+            game.stage.backgroundColor = getRandomColor();
 
             this.bg = game.add.image(game.world.centerX, game.world.centerY, 'bg').anchor.set(0.5);
-
             this.jumpSound = game.add.audio('jumpsound');
-
-            this.crashSound = game.add.audio('crashsound');
 
             game.physics.startSystem(Phaser.Physics.ARCADE);
 
             this.cube = game.add.sprite(100, (Math.floor(Math.random() * 400)), 'cube');
-
             this.cube.scale.setTo(0.5,0.5);
-
             game.physics.arcade.enable(this.cube);
-
             this.cube.body.gravity.y = 1000;
 
+            game.input.keyboard.enabled = true;
             this.controlkey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
             this.controlkey.onDown.add(this.jump, this);
 
             this.pipes = game.add.group();
-
             this.timer = game.time.events.loop(3000, this.addFullPipe, this);
 
             this.score = -100;
@@ -69,27 +60,21 @@ export function render(el) {
             this.textInfo = game.add.group();
 
             this.scoreLabel = game.add.text(20, 20,'0', style);
-
             this.scoreLabel.fill = '#000000';
 
             this.gameOverScore = game.add.text(250, 200, '0', style);
-
             this.textInfo.add(this.gameOverScore);
 
             this.gameOverHighScore = game.add.text(250, 250, '0', style);
-
             this.textInfo.add(this.gameOverHighScore);
 
             this.gameOverLabel = game.add.text(250, 300, 'Game Over', style);
-
             this.textInfo.add(this.gameOverLabel);
 
             this.restartButton = game.add.button(
                 310, 350, 'restartButton', this.actionOnClick, this, null, null, null, this.actionOnClick
             );
-
             this.restartButton.scale.setTo(0.1, 0.1);
-
             this.textInfo.add(this.restartButton);
 
             this.textInfo.visible = false;
@@ -131,6 +116,7 @@ export function render(el) {
         },
 
         restartGame: function() {
+            game.input.keyboard.enabled = false;
             var bmd = game.add.bitmapData(1, 1);
             bmd.fill(0, 0, 0);
             var semiTransparentOverlay = game.add.sprite(0, 0, bmd);
@@ -171,17 +157,25 @@ export function render(el) {
         parent: el.id,
     };
 
-    var game = new Phaser.Game(gameConfig);
+    game = new Phaser.Game(gameConfig);
     game.state.add('index', normalState);
     game.state.start('index');
-    console.log(el.id);
 };
 
 export function dispose() {
-    console.log('dispose called');
+    game.destroy();
 }
 
 function revisedRandId() {
     return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 

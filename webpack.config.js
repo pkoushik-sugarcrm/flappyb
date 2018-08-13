@@ -11,7 +11,7 @@ module.exports = {
     publicPath: 'http://localhost:3000/', 
     path: path.resolve(__dirname, './build'),
     filename: 'app.bundle.js',
-    library: 'appbundle',
+    library: 'jumpyCube',
     libraryTarget: 'umd'
   },
   module: {
