@@ -24,9 +24,11 @@ export function render(el) {
 
             this.game.load.image('bg', `${hostPath}/assets/background.png`);
 
-            this.game.load.image('cube', `${hostPath}/assets/logo.svg`);
+            this.game.load.image('cube', `${hostPath}/assets/cube.svg`);
 
-            this.game.load.image('pipe', `${hostPath}/assets/pipe.png`);
+            this.game.load.image('cloud', `${hostPath}/assets/cloud.png`);
+
+            this.game.load.image('pipe', `${hostPath}/assets/coffeecup.png`);
 
             this.game.load.image('restartButton', `${hostPath}/assets/button.png`, 193, 71);
 
@@ -51,7 +53,12 @@ export function render(el) {
             this.controlkey.onDown.add(this.jump, this);
 
             this.pipes = game.add.group();
+            // this.firstCloud = game.add.sprite(800, 50, 'cloud');
+            // game.physics.arcade.enable(this.firstCloud);
+            // this.firstCloud.body.velocity.y = -350;
+            // this.cloudtimer = game.time.events.loop(8000, this.addCloudImage, this);
             this.timer = game.time.events.loop(3000, this.addFullPipe, this);
+
 
             this.score = -100;
 
@@ -94,6 +101,14 @@ export function render(el) {
 
         stop: function() {
             this.cube.body.gravity.y = 100000;
+        },
+
+        addCloudImage: function() {
+            var cloud = game.add.sprite(1000 - Math.floor(Math.random() * 200), Math.floor(Math.random() * 60), 'cloud');
+            cloud.scale.setTo(0.5,0.5);
+            cloud.moveDown();
+            game.physics.arcade.enable(cloud);
+            cloud.body.velocity.x = -50;
         },
 
         addPipeImage: function(x, y) {
@@ -141,6 +156,7 @@ export function render(el) {
             this.gameOverHighScore.text = 'High Score: ' + highScore;
             this.gameOverHighScore.visible = true;
             game.time.events.remove(this.timer);
+            game.time.events.remove(this.cloudtimer);
             this.controlkey.onDown.add(this.stop, this);
         },
 
