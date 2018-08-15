@@ -145,9 +145,7 @@ function render(el) {
 
     var normalState = {
         preload: function preload() {
-            this.game.load.crossOrigin = "Anonymous";
-
-            this.game.load.audio('crashsound', hostPath + '/assets/crash.mp3');
+            this.game.load.crossOrigin = 'Anonymous';
 
             this.game.load.image('bg', hostPath + '/assets/background.png');
 
@@ -164,7 +162,6 @@ function render(el) {
             game.stage.backgroundColor = getRandomColor();
 
             this.bg = game.add.image(game.world.centerX, game.world.centerY, 'bg').anchor.set(0.5);
-            this.crashSound = game.add.audio('crashsound');
             this.jumpSound = game.add.audio('jumpsound');
 
             game.physics.startSystem(_phaserSplit2.default.Physics.ARCADE);
@@ -173,6 +170,8 @@ function render(el) {
             this.cube.scale.setTo(0.5, 0.5);
             game.physics.arcade.enable(this.cube);
             this.cube.body.gravity.y = 1000;
+            this.cube.checkWorldBounds = true;
+            this.cube.outOfBoundsKill = true;
 
             game.input.keyboard.enabled = true;
             this.controlkey = game.input.keyboard.addKey(_phaserSplit2.default.Keyboard.SPACEBAR);
@@ -183,7 +182,7 @@ function render(el) {
 
             this.score = -100;
 
-            var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
+            var style = { font: '30px Arial', fill: '#FFFFFF', align: 'center' };
 
             this.textInfo = game.add.group();
 
@@ -208,6 +207,7 @@ function render(el) {
 
         update: function update() {
             if (this.cube.y < -100 || this.cube.y > 600) {
+                this.cube.destroy();
                 this.restartGame();
             }
             game.physics.arcade.overlap(this.cube, this.pipes, this.restartGame, null, this);
@@ -220,14 +220,6 @@ function render(el) {
 
         stop: function stop() {
             this.cube.body.gravity.y = 100000;
-        },
-
-        addCloudImage: function addCloudImage() {
-            var cloud = game.add.sprite(1000 - Math.floor(Math.random() * 200), Math.floor(Math.random() * 60), 'cloud');
-            cloud.scale.setTo(0.5, 0.5);
-            cloud.moveDown();
-            game.physics.arcade.enable(cloud);
-            cloud.body.velocity.x = -50;
         },
 
         addPipeImage: function addPipeImage(x, y) {
@@ -250,7 +242,6 @@ function render(el) {
         },
 
         restartGame: function restartGame() {
-            this.crashSound.play();
             game.input.keyboard.enabled = false;
             var bmd = game.add.bitmapData(1, 1);
             bmd.fill(0, 0, 0);
@@ -276,11 +267,10 @@ function render(el) {
             this.gameOverHighScore.text = 'High Score: ' + highScore;
             this.gameOverHighScore.visible = true;
             game.time.events.remove(this.timer);
-            game.time.events.remove(this.cloudtimer);
-            this.controlkey.onDown.add(this.stop, this);
         },
 
         actionOnClick: function actionOnClick() {
+            game.state.add('index', normalState);
             game.state.start('index');
         }
     };

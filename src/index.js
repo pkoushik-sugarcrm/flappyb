@@ -20,9 +20,7 @@ export function render(el) {
 
     var normalState = {
         preload: function() {
-            this.game.load.crossOrigin = "Anonymous";
-
-            this.game.load.audio('crashsound', `${hostPath}/assets/crash.mp3`);
+            this.game.load.crossOrigin = 'Anonymous';
 
             this.game.load.image('bg', `${hostPath}/assets/background.png`);
 
@@ -39,7 +37,6 @@ export function render(el) {
             game.stage.backgroundColor = getRandomColor();
 
             this.bg = game.add.image(game.world.centerX, game.world.centerY, 'bg').anchor.set(0.5);
-            this.crashSound = game.add.audio('crashsound');
             this.jumpSound = game.add.audio('jumpsound');
 
             game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -48,6 +45,8 @@ export function render(el) {
             this.cube.scale.setTo(0.5,0.5);
             game.physics.arcade.enable(this.cube);
             this.cube.body.gravity.y = 1000;
+            this.cube.checkWorldBounds = true;
+            this.cube.outOfBoundsKill = true;
 
             game.input.keyboard.enabled = true;
             this.controlkey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -58,11 +57,11 @@ export function render(el) {
 
             this.score = -100;
 
-            var style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
+            var style = {font: '30px Arial', fill: '#FFFFFF', align: 'center'};
 
             this.textInfo = game.add.group();
 
-            this.scoreLabel = game.add.text(20, 20,'0', style);
+            this.scoreLabel = game.add.text(20, 20, '0', style);
             this.scoreLabel.fill = '#000000';
 
             this.gameOverScore = game.add.text(250, 200, '0', style);
@@ -85,6 +84,7 @@ export function render(el) {
 
         update: function() {
             if (this.cube.y < -100 || this.cube.y > 600) {
+                this.cube.destroy();
                 this.restartGame();
             }
             game.physics.arcade.overlap(this.cube, this.pipes, this.restartGame, null, this);
@@ -99,14 +99,6 @@ export function render(el) {
             this.cube.body.gravity.y = 100000;
         },
 
-        addCloudImage: function() {
-            var cloud = game.add.sprite(1000 - Math.floor(Math.random() * 200), Math.floor(Math.random() * 60), 'cloud');
-            cloud.scale.setTo(0.5,0.5);
-            cloud.moveDown();
-            game.physics.arcade.enable(cloud);
-            cloud.body.velocity.x = -50;
-        },
-
         addPipeImage: function(x, y) {
             var p = game.add.sprite(x, y, 'pipe');
             this.pipes.add(p);
@@ -117,7 +109,7 @@ export function render(el) {
         addFullPipe: function() {
             hole = Math.floor(Math.random() * 5);
             for (var i = 0; i < 6; i++) {
-                if (i != hole && i+1 != hole) {
+                if (i != hole && i + 1 != hole) {
                     this.addPipeImage(700, (i * 100 + 10));
                 }
             }
@@ -127,14 +119,13 @@ export function render(el) {
         },
 
         restartGame: function() {
-            this.crashSound.play();
             game.input.keyboard.enabled = false;
             var bmd = game.add.bitmapData(1, 1);
             bmd.fill(0, 0, 0);
             var semiTransparentOverlay = game.add.sprite(0, 0, bmd);
             semiTransparentOverlay.scale.setTo(game.width, game.height);
             semiTransparentOverlay.alpha = 0;
-            game.add.tween(semiTransparentOverlay).to({alpha:0.3}, 500, Phaser.Easing.Quadratic.In, true);
+            game.add.tween(semiTransparentOverlay).to({alpha: 0.3}, 500, Phaser.Easing.Quadratic.In, true);
             semiTransparentOverlay.moveDown();
             this.textInfo.visible = true;
             game.world.bringToTop(this.textInfo);
@@ -153,11 +144,10 @@ export function render(el) {
             this.gameOverHighScore.text = 'High Score: ' + highScore;
             this.gameOverHighScore.visible = true;
             game.time.events.remove(this.timer);
-            game.time.events.remove(this.cloudtimer);
-            this.controlkey.onDown.add(this.stop, this);
         },
 
         actionOnClick: function() {
+            game.state.add('index', normalState);
             game.state.start('index');
         }
     };
