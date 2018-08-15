@@ -147,11 +147,11 @@ function render(el) {
         preload: function preload() {
             this.game.load.crossOrigin = "Anonymous";
 
+            this.game.load.audio('crashsound', hostPath + '/assets/crash.mp3');
+
             this.game.load.image('bg', hostPath + '/assets/background.png');
 
             this.game.load.image('cube', hostPath + '/assets/cube.svg');
-
-            this.game.load.image('cloud', hostPath + '/assets/cloud.png');
 
             this.game.load.image('pipe', hostPath + '/assets/coffeecup.png');
 
@@ -164,6 +164,7 @@ function render(el) {
             game.stage.backgroundColor = getRandomColor();
 
             this.bg = game.add.image(game.world.centerX, game.world.centerY, 'bg').anchor.set(0.5);
+            this.crashSound = game.add.audio('crashsound');
             this.jumpSound = game.add.audio('jumpsound');
 
             game.physics.startSystem(_phaserSplit2.default.Physics.ARCADE);
@@ -178,10 +179,6 @@ function render(el) {
             this.controlkey.onDown.add(this.jump, this);
 
             this.pipes = game.add.group();
-            // this.firstCloud = game.add.sprite(800, 50, 'cloud');
-            // game.physics.arcade.enable(this.firstCloud);
-            // this.firstCloud.body.velocity.y = -350;
-            // this.cloudtimer = game.time.events.loop(8000, this.addCloudImage, this);
             this.timer = game.time.events.loop(3000, this.addFullPipe, this);
 
             this.score = -100;
@@ -253,6 +250,7 @@ function render(el) {
         },
 
         restartGame: function restartGame() {
+            this.crashSound.play();
             game.input.keyboard.enabled = false;
             var bmd = game.add.bitmapData(1, 1);
             bmd.fill(0, 0, 0);
